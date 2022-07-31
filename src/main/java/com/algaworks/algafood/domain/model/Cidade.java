@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -13,8 +15,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "cozinha")
-public class Cozinha {
+@Table(name = "cidade")
+public class Cidade {
 
 	@Id
 	@EqualsAndHashCode.Include
@@ -24,4 +26,7 @@ public class Cozinha {
 	@Column(nullable = false)
 	private String nome;
 
+	@ManyToOne
+	@JoinColumn(name = "estado_id", nullable = false)
+	private Estado estado;
 }

@@ -10,11 +10,11 @@ import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
-@Table(name = "cozinha")
-public class Cozinha {
+@Table(name = "permissao")
+public class Permissao {
 
 	@Id
 	@EqualsAndHashCode.Include
@@ -23,5 +23,7 @@ public class Cozinha {
 
 	@Column(nullable = false)
 	private String nome;
+
+	private String descricao;
 
 }
