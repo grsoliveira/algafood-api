@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +36,15 @@ public class EstadoController implements EntityController<Estado> {
 	@Override
 	@GetMapping
 	public List<Estado> listar() {
-		return this.estadoRepository.listar();
+		return this.estadoRepository.findAll();
 	}
 
 	@Override
 	@GetMapping("/{estadoId}")
 	public ResponseEntity<Estado> buscar(Long estadoId) {
-		Estado estado = this.estadoRepository.buscar(estadoId);
-		if (estado != null) {
-			return ResponseEntity.ok(estado);
+		Optional<Estado> estado = this.estadoRepository.findById(estadoId);
+		if (estado.isPresent()) {
+			return ResponseEntity.ok(estado.get());
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -64,14 +65,14 @@ public class EstadoController implements EntityController<Estado> {
 	@Override
 	@PutMapping("/{estadoId}")
 	public ResponseEntity<Estado> atualizar(@PathVariable Long estadoId, @RequestBody Estado estado) {
-		Estado estadoAtual = this.estadoRepository.buscar(estado.getId());
+		Optional<Estado> estadoAtual = this.estadoRepository.findById(estado.getId());
 
 		try {
-			if (estadoAtual != null) {
-				BeanUtils.copyProperties(estado, estadoAtual, "id");
-				estadoAtual = this.estadoService.salvar(estadoAtual);
+			if (estadoAtual.isPresent()) {
+				BeanUtils.copyProperties(estado, estadoAtual.get(), "id");
+				Estado estadoSalvo = this.estadoService.salvar(estadoAtual.get());
 
-				return ResponseEntity.ok(estadoAtual);
+				return ResponseEntity.ok(estadoSalvo);
 			}
 		} catch (EntidadeNaoEncontradaException e) {
 			return ResponseEntity.badRequest().build();

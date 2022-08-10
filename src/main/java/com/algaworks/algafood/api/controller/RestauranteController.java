@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +40,16 @@ public class RestauranteController implements EntityController<Restaurante> {
 
 	@GetMapping
 	public List<Restaurante> listar() {
-		return this.restauranteRepository.listar();
+		return this.restauranteRepository.findAll();
 	}
 
 	@Override
 	@GetMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
-		Restaurante restaurante = this.restauranteRepository.buscar(restauranteId);
+		Optional<Restaurante> restaurante = this.restauranteRepository.findById(restauranteId);
 
-		if (restaurante != null) {
-			return ResponseEntity.ok(restaurante);
+		if (restaurante.isPresent()) {
+			return ResponseEntity.ok(restaurante.get());
 		}
 
 		return ResponseEntity.notFound().build();
@@ -72,14 +73,14 @@ public class RestauranteController implements EntityController<Restaurante> {
 	@PutMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> atualizar(@PathVariable Long restauranteId,
 			@RequestBody Restaurante restaurante) {
-		Restaurante restauranteAtual = this.restauranteRepository.buscar(restauranteId);
+		Optional<Restaurante> restauranteAtual = this.restauranteRepository.findById(restauranteId);
 
 		try {
 			if (restauranteAtual != null) {
-				BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
-				restauranteAtual = this.restauranteService.salvar(restauranteAtual);
+				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id");
+				Restaurante restauranteSalvo = this.restauranteService.salvar(restauranteAtual.get());
 
-				return ResponseEntity.ok(restauranteAtual);
+				return ResponseEntity.ok(restauranteSalvo);
 
 			}
 		} catch (EntidadeNaoEncontradaException e) {
@@ -93,14 +94,14 @@ public class RestauranteController implements EntityController<Restaurante> {
 	public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId,
 			@RequestBody Map<String, Object> campos) {
 
-		Restaurante restauranteAtual = this.restauranteRepository.buscar(restauranteId);
-		if (restauranteAtual == null) {
+		Optional<Restaurante> restauranteAtual = this.restauranteRepository.findById(restauranteId);
+		if (restauranteAtual.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 
-		this.mesclar(campos, restauranteAtual);
+		this.mesclar(campos, restauranteAtual.get());
 
-		return this.atualizar(restauranteId, restauranteAtual);
+		return this.atualizar(restauranteId, restauranteAtual.get());
 	}
 
 	private void mesclar(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {

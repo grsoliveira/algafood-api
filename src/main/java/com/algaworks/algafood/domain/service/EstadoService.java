@@ -17,12 +17,12 @@ public class EstadoService {
 	private EstadoRepository estadoRepository;
 
 	public Estado salvar(Estado estado) {
-		return this.estadoRepository.salvar(estado);
+		return this.estadoRepository.save(estado);
 	}
 
 	public void excluir(Long estadoId) {
 		try {
-			this.estadoRepository.remover(estadoId);
+			this.estadoRepository.deleteById(estadoId);
 
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(

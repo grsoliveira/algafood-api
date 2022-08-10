@@ -17,12 +17,12 @@ public class CidadeService {
 	private CidadeRepository cidadeRepository;
 
 	public Cidade salvar(Cidade cidade) {
-		return this.cidadeRepository.salvar(cidade);
+		return this.cidadeRepository.save(cidade);
 	}
 
 	public void excluir(Long cidadeId) {
 		try {
-			this.cidadeRepository.remover(cidadeId);
+			this.cidadeRepository.deleteById(cidadeId);
 
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(
