@@ -25,7 +25,7 @@ import com.algaworks.algafood.domain.service.CozinhaService;
 
 @RestController
 @RequestMapping(value = "/cozinhas", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CozinhaController {
+public class CozinhaController implements EntityController<Cozinha> {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
@@ -38,37 +38,38 @@ public class CozinhaController {
 		return this.cozinhaRepository.listar();
 	}
 
+	@Override
 	@GetMapping(value = "/{cozinhaId}")
 	public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
 		Cozinha cozinha = this.cozinhaRepository.buscar(cozinhaId);
-
 		if (cozinha != null) {
 			return ResponseEntity.ok(cozinha);
 		}
-
 		return ResponseEntity.notFound().build();
 	}
 
+	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha adicionar(@RequestBody Cozinha cozinha) {
-		return this.cozinhaService.salvar(cozinha);
+	public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha) {
+		cozinha = this.cozinhaService.salvar(cozinha);
+		return ResponseEntity.ok(cozinha);
 	}
 
+	@Override
 	@PutMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha) {
 		Cozinha cozinhaAtual = this.cozinhaRepository.buscar(cozinhaId);
-
 		if (cozinhaAtual != null) {
 			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
 			cozinhaAtual = this.cozinhaService.salvar(cozinhaAtual);
 
 			return ResponseEntity.ok(cozinhaAtual);
 		}
-
 		return ResponseEntity.notFound().build();
 	}
 
+	@Override
 	@DeleteMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) {
 		try {

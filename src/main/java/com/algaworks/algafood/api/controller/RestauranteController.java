@@ -22,7 +22,7 @@ import com.algaworks.algafood.domain.service.RestauranteService;
 
 @RestController
 @RequestMapping(value = "/restaurantes", produces = MediaType.APPLICATION_JSON_VALUE)
-public class RestauranteController {
+public class RestauranteController implements EntityController<Restaurante> {
 
 	@Autowired
 	private RestauranteRepository restauranteRepository;
@@ -35,6 +35,7 @@ public class RestauranteController {
 		return this.restauranteRepository.listar();
 	}
 
+	@Override
 	@GetMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
 		Restaurante restaurante = this.restauranteRepository.buscar(restauranteId);
@@ -46,6 +47,7 @@ public class RestauranteController {
 		return ResponseEntity.notFound().build();
 	}
 
+	@Override
 	@PostMapping
 	public ResponseEntity<Restaurante> adicionar(@RequestBody Restaurante restaurante) {
 		try {
@@ -59,6 +61,7 @@ public class RestauranteController {
 
 	}
 
+	@Override
 	@PutMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> atualizar(@PathVariable Long restauranteId,
 			@RequestBody Restaurante restaurante) {
@@ -77,6 +80,12 @@ public class RestauranteController {
 		}
 
 		return ResponseEntity.notFound().build();
+	}
+
+	@Override
+	public ResponseEntity<Restaurante> remover(Long entityId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
